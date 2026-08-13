@@ -1,0 +1,14 @@
+variable,non_responders,responders,difference
+returned,0.5614,0.6964,0.1351
+age_on_start,18.0811,17.6781,-0.403
+total_hours_paid,102.6727,132.877,30.2043
+worked_zero_hours,0.1995,0.012,-0.1875
+is_no_show,0.0514,0.005,-0.0464
+worksite_matched,0.8154,0.8178,0.0024
+race=Asian,0.1779,0.2278,0.0499
+race=Black or African American,0.4169,0.4499,0.033
+race=Hispanic,0.0036,0.0019,-0.0018
+race=Other,0.1865,0.1848,-0.0017
+race=White or Caucasian,0.215,0.1357,-0.0793
+gender=Female,0.5806,0.6068,0.0262
+gender=Male,0.4194,0.3932,-0.0262

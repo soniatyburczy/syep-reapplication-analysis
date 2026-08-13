@@ -1,0 +1,3 @@
+test,df,chi2,p,note
+Wald (person-clustered),45,930.5850864198148,8.424381564575923e-166,quote this one
+Likelihood ratio (independence),45,981.4428077333141,2.386062177077838e-176,assumes independent rows; anti-conservative here

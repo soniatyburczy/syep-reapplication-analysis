@@ -1,0 +1,133 @@
+
+--- B construction ---
+survey file: 8,882 person-years / 8,209 people; 8,882 person-years inside 2022-2025
+dropped 1,327 survey person-years (1,327 people) with no A person-year in the window; 0 of those people appear in A in some other year, 1,327 appear nowhere in A
+
+--- survey year vs earliest A year (person-years) ---
+Year             2022  2023  2024  2025
+earliest_A_year                        
+2022             2494   373   340   139
+2023                0  1439   448   149
+2024                0     0  1911   262
+policy=earliest-A-year-only: kept 5,844 people; dropped 1,038 people whose survey year is later than their earliest A year in the window (1,038 would be recovered by setting REQUIRE_SURVEY_AT_EARLIEST_A_YEAR = False, at the cost of measuring `returned` after prior participation)
+B: 5,844 unique participants
+
+=== 1. ELIGIBILITY CENSORING CHECK ===
+         n  returned   rate  eligible_next_year
+age                                            
+16   27581     18774 0.6807                   1
+17   27966     17037 0.6092                   1
+18   22456     13178 0.5868                   1
+19   18106     10511 0.5805                   1
+20   13243      7175 0.5418                   1
+21    9512      4940 0.5193                   1
+22    6887      3485 0.5060                   1
+23    4666      2365 0.5069                   1
+
+no age-24 rows in the frame, so there is nothing to censor and the eligibility restriction is a no-op. primary_refit.csv will show identical columns. Worth confirming upstream why the top eligible age is absent.
+
+A: 130,417 -> 130,417 eligible (100.0%)
+B: 5,844 -> 5,844 eligible (100.0%)
+
+=== 2. PRIMARY MODEL, BEFORE vs AFTER RESTRICTION ===
+
+[A_full_unrestricted] starting n=130,417; 15,792 dropped on provider
+formula_missing_drop=0 converged=True n_used=114,625 pseudo_r2=0.0736
+
+[A_full_eligible] starting n=130,417; 15,792 dropped on provider
+formula_missing_drop=0 converged=True n_used=114,625 pseudo_r2=0.0736
+                                                      term  or_unrestricted  or_eligible_only  p_eligible_only  pct_change_log_or
+                                                 Intercept           2.2429            2.2429           0.0000             0.0000
+        C(hours_band, Treatment(reference="126-149"))[T.0]           0.2359            0.2359           0.0000             0.0000
+     C(hours_band, Treatment(reference="126-149"))[T.1-25]           0.3767            0.3767           0.0000             0.0000
+    C(hours_band, Treatment(reference="126-149"))[T.26-75]           0.6396            0.6396           0.0000             0.0000
+   C(hours_band, Treatment(reference="126-149"))[T.76-125]           0.8462            0.8462           0.0015             0.0000
+C(hours_band, Treatment(reference="126-149"))[T.150 (cap)]           1.3303            1.3303           0.0000             0.0000
+                                           C(Year)[T.2023]           1.1985            1.1985           0.0000             0.0000
+                                           C(Year)[T.2024]           1.3064            1.3064           0.0000             0.0000
+                                    C(borough)[T.Brooklyn]           1.2342            1.2342           0.0399             0.0000
+                                   C(borough)[T.Manhattan]           1.0594            1.0594           0.5109             0.0000
+                                      C(borough)[T.Queens]           1.0151            1.0151           0.8712             0.0000
+                               C(borough)[T.Staten Island]           1.0300            1.0300           0.7769             0.0000
+                                 bs(age_on_start, df=3)[0]           0.5149            0.5149           0.0000             0.0000
+                                 bs(age_on_start, df=3)[1]           0.7706            0.7706           0.0145             0.0000
+                                 bs(age_on_start, df=3)[2]           0.4971            0.4971           0.0000             0.0000
+                                                is_no_show           1.0470            1.0470           0.4287             0.0000
+                                          worksite_matched           0.8855            0.8855           0.0046             0.0000
+
+largest hours-band shift: 0.0% on the log-OR scale -- gradient is robust to the censoring fix.
+
+=== 3. HOURS x AGE (frame A) ===
+
+[A_hours_x_age] starting n=130,417; 15,792 dropped on provider
+formula_missing_drop=0 converged=True n_used=114,625 pseudo_r2=0.0725
+
+=== 4. FIRST CHOICE x AGE (frame B) ===
+
+--- gate redundancy ---
+cf_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+expect_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+benefit_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+[B_firstchoice_x_age] dropped cf_answered: constant in this subset
+[B_firstchoice_x_age] dropped expect_answered: constant in this subset
+
+[B_firstchoice_x_age] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0233
+
+adjusted probabilities, hours x age:
+age_group hours_band     n   prob     lo     hi
+    16-17          0 48988 0.3584 0.3395 0.3785
+    16-17       1-25 48988 0.4437 0.3982 0.4943
+    16-17      26-75 48988 0.6155 0.5303 0.6924
+    16-17     76-125 48988 0.6735 0.6281 0.7147
+    16-17    126-149 48988 0.7039 0.6850 0.7213
+    16-17  150 (cap) 48988 0.7392 0.7231 0.7538
+    18-20          0 47241 0.3050 0.2896 0.3205
+    18-20       1-25 47241 0.4146 0.3730 0.4571
+    18-20      26-75 47241 0.5272 0.4815 0.5716
+    18-20     76-125 47241 0.5967 0.5602 0.6315
+    18-20    126-149 47241 0.6467 0.6246 0.6675
+    18-20  150 (cap) 47241 0.7143 0.6950 0.7326
+    21-23          0 18396 0.2473 0.2238 0.2721
+    21-23       1-25 18396 0.3757 0.3279 0.4247
+    21-23      26-75 18396 0.4750 0.4161 0.5328
+    21-23     76-125 18396 0.5510 0.5102 0.5915
+    21-23    126-149 18396 0.5779 0.5428 0.6115
+    21-23  150 (cap) 18396 0.6864 0.6263 0.7393
+
+adjusted probabilities, first choice x age:
+age_group  expect_first_choice    n   prob     lo     hi
+    16-17                    0 2965 0.6977 0.6573 0.7324
+    16-17                    1 2965 0.7489 0.7254 0.7677
+    18-20                    0 1310 0.6113 0.5536 0.6677
+    18-20                    1 1310 0.6599 0.6220 0.6947
+    21-23                    0  510 0.5468 0.4775 0.6179
+    21-23                    1  510 0.6526 0.5991 0.7010
+
+probability contrasts, pp (0 -> 126-149 hours):
+age_group from      to     n  diff_pp  lo_pp  hi_pp
+    16-17    0 126-149 48988    34.55  33.07  35.93
+    18-20    0 126-149 47241    34.18  32.23  35.90
+    21-23    0 126-149 18396    33.05  30.33  35.64
+
+probability contrasts, pp (first choice no -> yes):
+age_group  from  to    n  diff_pp  lo_pp  hi_pp
+    16-17     0   1 2965     5.12   0.93   9.22
+    18-20     0   1 1310     4.86  -1.90  11.44
+    21-23     0   1  510    10.58   2.97  17.84
+
+difference of differences, hours gap by age group (percentage points):
+group_a group_b  gap_a_pp  gap_b_pp  did_pp  lo_pp  hi_pp  p_boot  separates
+  16-17   18-20     34.55     34.18    0.38  -1.41   2.20    0.65      False
+  16-17   21-23     34.55     33.05    1.50  -1.10   4.21    0.28      False
+  18-20   21-23     34.18     33.05    1.12  -1.08   3.43    0.32      False
+  -> no pair separates from zero: this sample cannot establish that the gap differs by age. Report the gaps with their intervals and say the comparison is inconclusive.
+
+difference of differences, first-choice gap by age group (percentage points):
+group_a group_b  gap_a_pp  gap_b_pp  did_pp  lo_pp  hi_pp  p_boot  separates
+  16-17   18-20      5.12      4.86    0.26  -7.58   8.84    0.94      False
+  16-17   21-23      5.12     10.58   -5.46 -13.43   3.29    0.20      False
+  18-20   21-23      4.86     10.58   -5.72 -16.19   4.77    0.27      False
+  -> no pair separates from zero: this sample cannot establish that the gap differs by age. Report the gaps with their intervals and say the comparison is inconclusive.
+wrote plots/hours_by_age.png
+wrote plots/firstchoice_by_age.png

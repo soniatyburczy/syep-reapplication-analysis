@@ -1,0 +1,6 @@
+﻿borough,n,returned,rate,ci_lo,ci_hi,thin
+Brooklyn,57895,36360,0.628,0.624,0.632,False
+Staten Island,5179,2984,0.576,0.563,0.59,False
+Manhattan,11402,6482,0.568,0.559,0.578,False
+Bronx,27362,15491,0.566,0.56,0.572,False
+Queens,28579,16148,0.565,0.559,0.571,False

@@ -1,0 +1,108 @@
+
+--- demographics ---
+race: 5 level(s); 0 rows (0.0%) coded as 'Missing/unrecorded'
+gender: 2 level(s); 0 rows (0.0%) coded as 'Missing/unrecorded'
+
+--- B construction ---
+survey file: 8,882 person-years / 8,209 people; 8,882 person-years inside 2022-2025
+dropped 1,327 survey person-years (1,327 people) with no A person-year in the window; 0 of those people appear in A in some other year, 1,327 appear nowhere in A
+
+--- survey year vs earliest A year (person-years) ---
+Year             2022  2023  2024  2025
+earliest_A_year                        
+2022             2494   373   340   139
+2023                0  1439   448   149
+2024                0     0  1911   262
+policy=earliest-A-year-only: kept 5,844 people; dropped 1,038 people whose survey year is later than their earliest A year in the window (1,038 would be recovered by setting REQUIRE_SURVEY_AT_EARLIEST_A_YEAR = False, at the cost of measuring `returned` after prior participation)
+B: 5,844 unique participants
+A full person-years: 130,417
+B survey person-years: 5,844
+A exact survey-key subsample: 5,844
+
+--- gate redundancy ---
+cf_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+expect_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+benefit_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+
+--- cluster (provider) coverage by year ---
+      person_years  missing_provider  pct_missing
+Year                                             
+2022         41757             15792         37.8
+2023         43652                 0          0.0
+2024         45008                 0          0.0
+overall: 12.1% of A person-years have no provider and are excluded from every provider-clustered fit
+
+A provider-complete person-years: 114,625 of 130,417 (87.9%); both A fits use this frame so that clustering is the only difference between them
+[A_full] demographic references: race='Black or African American', gender='Female'
+[A_survey_subsample] demographic references: race='Black or African American', gender='Female'
+[B_survey] demographic references: race='Black or African American', gender='Female'
+
+--- categorical level support [A_full] ---
+race='Black or African American': n=46,137 return_rate=0.595
+race='White or Caucasian': n=27,448 return_rate=0.672
+race='Asian': n=20,747 return_rate=0.604
+race='Other': n=20,016 return_rate=0.533
+race='Hispanic': n=277 return_rate=0.220
+gender='Female': n=67,345 return_rate=0.613
+gender='Male': n=47,280 return_rate=0.590
+
+--- categorical level support [B_survey] ---
+race='Black or African American': n=2,629 return_rate=0.714
+race='Asian': n=1,331 return_rate=0.695
+race='Other': n=1,080 return_rate=0.646
+race='White or Caucasian': n=793 return_rate=0.714
+race='Hispanic': n=11 return_rate=0.364  [SEPARATION]
+gender='Female': n=3,546 return_rate=0.705
+gender='Male': n=2,298 return_rate=0.683
+
+--- design [A_full] ---
+shape=(114625, 22) rank=22 full rank
+scaled condition index=27.6
+
+--- design [A_survey_subsample] ---
+shape=(4785, 22) rank=22 full rank
+scaled condition index=102.3  (collinearity worth checking)
+
+--- design [B_survey] ---
+shape=(4785, 35) rank=35 full rank (after dropping 2 constant term(s); see fit log)
+scaled condition index=151.5  (collinearity worth checking)
+
+--- separation and thin cells ---
+[thin] is_no_show: 0: n=5,815 rate=0.697 | 1: n=29 rate=0.621
+0 term(s) separated/near-empty; 1 additional term(s) with a cell under 50 rows. Thin-cell coefficients are estimable but carry wide intervals; report them with the CI or not at all.
+
+[A_full] starting n=114,625; 0 dropped on provider
+formula_missing_drop=0 converged=True n_used=114,625 pseudo_r2=0.0783
+
+[A_person_clustered] starting n=114,625; 0 dropped on Participant.Unique.ID
+formula_missing_drop=0 converged=True n_used=114,625 pseudo_r2=0.0783
+
+[A_survey_subsample] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0269
+[B_survey] dropped cf_answered: constant in this subset
+[B_survey] dropped expect_answered: constant in this subset
+
+[B_survey] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0330
+
+clustering check: identical n=114,625; max |coef difference|=0.00e+00 (expected ~0 -- clustering changes standard errors only)
+SE ratio person/provider: median=0.416 min=0.173 max=1.228
+ratios near 1 mean repeated-person dependence is not widening intervals beyond what provider clustering already absorbs; ratios well above 1 mean person-level dependence is the binding constraint
+
+BH family: demographics included in the A-fit family (DEMOGRAPHICS_IN_BH_FAMILY=True); they are never in the B_survey family
+
+selection frame=97,761 earliest 2022-2025 person-years; responders=5,844 non_responders=91,917
+                      variable  non_responders  responders  difference
+                      returned          0.5614      0.6964      0.1351
+                  age_on_start         18.0811     17.6781     -0.4030
+              total_hours_paid        102.6727    132.8770     30.2043
+             worked_zero_hours          0.1995      0.0120     -0.1875
+                    is_no_show          0.0514      0.0050     -0.0464
+              worksite_matched          0.8154      0.8178      0.0024
+                    race=Asian          0.1779      0.2278      0.0499
+race=Black or African American          0.4169      0.4499      0.0330
+                 race=Hispanic          0.0036      0.0019     -0.0018
+                    race=Other          0.1865      0.1848     -0.0017
+       race=White or Caucasian          0.2150      0.1357     -0.0793
+                 gender=Female          0.5806      0.6068      0.0262
+                   gender=Male          0.4194      0.3932     -0.0262

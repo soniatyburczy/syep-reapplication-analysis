@@ -1,0 +1,62 @@
+
+--- B construction ---
+survey file: 8,882 person-years / 8,209 people; 8,882 person-years inside 2022-2025
+dropped 1,327 survey person-years (1,327 people) with no A person-year in the window; 0 of those people appear in A in some other year, 1,327 appear nowhere in A
+
+--- survey year vs earliest A year (person-years) ---
+Year             2022  2023  2024  2025
+earliest_A_year                        
+2022             2494   373   340   139
+2023                0  1439   448   149
+2024                0     0  1911   262
+policy=earliest-A-year-only: kept 5,844 people; dropped 1,038 people whose survey year is later than their earliest A year in the window (1,038 would be recovered by setting REQUIRE_SURVEY_AT_EARLIEST_A_YEAR = False, at the cost of measuring `returned` after prior participation)
+B: 5,844 unique participants
+
+--- gate redundancy ---
+cf_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+expect_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+benefit_answered: min selected among answerers=0, max among non-answerers=0 -> retained
+
+B: 5,844 participants, return rate 0.696
+
+=== 1. GATE SENSITIVITY ===
+gates kept by check_gates: ['cf_answered', 'expect_answered', 'benefit_answered']
+gates forced in for this check: ['benefit_answered']
+[B_as_specified] dropped cf_answered: constant in this subset
+[B_as_specified] dropped expect_answered: constant in this subset
+
+[B_as_specified] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0295
+
+[B_all_gates] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0295
+
+expect_first_choice: OR 1.308 (p=0.000221)  ->  1.308 (p=0.000221)  with all gates forced in
+  headline is stable to gate specification.
+[B_survey_replicate] dropped cf_answered: constant in this subset
+[B_survey_replicate] dropped expect_answered: constant in this subset
+
+[B_survey_replicate] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0295
+
+=== 2. BLOCK WALD TESTS ===
+                           block  df  chi2         p         q
+                              cf   4 5.172    0.2701    0.2789
+                          expect   3 15.35  0.001544  0.003861
+                         benefit   5 6.291    0.2789    0.2789
+expect minus expect_first_choice   2 2.673    0.2628    0.2789
+                ALL survey items  12 42.53 2.709e-05 0.0001355
+
+=== 3. COMPOSITE COUNTS ===
+[B_composite] dropped cf_answered: constant in this subset
+[B_composite] dropped expect_answered: constant in this subset
+
+[B_composite] starting n=5,844; 1,059 dropped on provider
+formula_missing_drop=0 converged=True n_used=4,785 pseudo_r2=0.0274
+  block               term  n_items  alpha_kr20    or  or_lo  or_hi     p  rule_out_above     q               verdict
+benefit n_benefit_selected        5      -0.188 0.997  0.925  1.074 0.929           1.068 0.929 ruled out above 1.20x
+ expect  n_expect_selected        3       0.401 1.099  1.005  1.203 0.039           1.186 0.078 ruled out above 1.20x
+  ! KR-20 = -0.19 for 'benefit': the items do not scale together, so this count is a tally and not an index. Lead with the block Wald test instead.
+  ! KR-20 = 0.40 for 'expect': the items do not scale together, so this count is a tally and not an index. Lead with the block Wald test instead.
+
+These are SECONDARY analyses. They are BH-corrected within each table above and must not be merged into the pre-specified family in coefs.csv. Label them exploratory wherever they appear.

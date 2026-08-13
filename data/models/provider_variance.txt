@@ -1,0 +1,6 @@
+raw provider return rate sd      = 5.23 pp
+adjusted excess sd               = 4.20 pp
+spread accounted for by mix      = 19.6%
+Spearman(raw rate, adj excess)   = 0.874
+
+Adjustment changes neither the spread nor the ordering much, so differences between providers are not explained by the participant characteristics in the model. That does not make them provider effects -- it means the cause is something not measured here.

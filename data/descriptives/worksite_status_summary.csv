@@ -1,0 +1,20 @@
+﻿Year,worksite_status,records,% of records
+2022,active,3127,0.99
+2022,exited,5,0.002
+2022,no_show,19,0.006
+2022,test,2,0.001
+2022,unplaced,6,0.002
+2023,active,5907,0.986
+2023,exited,1,0.0
+2023,no_show,55,0.009
+2023,test,4,0.001
+2023,unplaced,22,0.004
+2024,active,6320,0.981
+2024,no_show,96,0.015
+2024,test,8,0.001
+2024,unplaced,19,0.003
+Pooled,active,15354,0.985
+Pooled,exited,6,0.0
+Pooled,no_show,170,0.011
+Pooled,test,14,0.001
+Pooled,unplaced,47,0.003
