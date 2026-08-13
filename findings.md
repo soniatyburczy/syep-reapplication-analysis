@@ -143,7 +143,7 @@ under person clustering (q < 0.0001). Providers nest within boroughs, so provide
 is the appropriate and conservative choice. Worth noting as a case where the inference
 decision changed the conclusion.
  
-**Clustering rests on 50 providers**, near the conventional minimum for cluster-robust
+**Clustering rests on 46 providers**, near the conventional minimum for cluster-robust
 asymptotics.
  
 **2025 is excluded as an index year** — reapplication would require 2026 data (full data unavailable: 2026 cycle not finished)
